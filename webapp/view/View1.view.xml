@@ -1,0 +1,22 @@
+<mvc:View controllerName="com.docqanda.docqa.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:u="sap.ui.unified"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+    <content>
+        <VBox class="sapUiSmallMargin">
+    <u:FileUploader id="fileUploader"
+                  change="onFileChange"
+                  buttonText="Upload PDF"
+                  fileType="pdf"
+                  uploadOnChange="false"/>
+    <Input id="questionInput" placeholder="Ask your question..." />
+    <Button text="Ask" press="onAskQuestion" class="sapUiSmallMarginTop"/>
+    <Text text="{/answer}" class="sapUiSmallMarginTop"/>
+    <List items="{/highlights}">
+      <StandardListItem title="{similarity}" description="{excerpt}" />
+    </List>
+  </VBox>
+    </content>
+    </Page>
+</mvc:View>
