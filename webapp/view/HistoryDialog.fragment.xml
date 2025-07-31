@@ -1,6 +1,11 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
   <Dialog id="historyDialog" title="Asked Questions History" draggable="true" resizable="true">
     <VBox>
+      <HBox justifyContent="End" class="sapUiTinyMarginBottom">
+        <Button text="Weekly" press=".onFilterWeekly" type="Emphasized" />
+        <Button text="Monthly" press=".onFilterMonthly" type="Emphasized" class="sapUiTinyMarginBegin" />
+      </HBox>
+
       <List id="historyList" items="{
     path: 'history>/questions'
   }">

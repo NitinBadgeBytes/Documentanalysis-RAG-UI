@@ -15,6 +15,23 @@
       "version": "1.18.2",
       "toolsId": "79ebf156-c4f7-484a-b707-fa0a3a2ab030"
     },
+    "crossNavigation": {
+      "inbounds": {
+          "intent1": {
+              "signature": {
+                  "parameters": {},
+                  "additionalParameters": "allowed"
+              },
+              "semanticObject": "DocumentQandA",
+              "action": "Display",
+              "title": "Document Q&A Assistant",
+              "info": "Retrieve Information From Documents",
+              "subTitle": "Retrieve Information From Documents",
+              "icon": "sap-icon://ai"
+          }
+      }
+  },
+
     "dataSources": {
       "mainService": {
         "uri": "docqaDest/odata/v4/doc-qa/",

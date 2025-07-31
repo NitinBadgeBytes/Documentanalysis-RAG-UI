@@ -1,1 +1,99 @@
 /* Enter your custom styles here */
+.sapUiFupGroup{
+    display: table;
+    width: 34rem;
+    /* height: 7rem; */
+    /* margin: 1rem; */
+    padding: 33px;
+}
+
+.uploadTxt {
+    max-width: 100%;
+    bottom: -5rem;
+    position: absolute;
+    left: 2rem;
+    font-size: 16px;
+}
+
+.QAhbox{
+    left: 4rem;
+    position: absolute;
+    display: flex;
+}
+
+
+
+/* Make cards look modern with subtle shadow & rounded corners */
+.sapFCard {
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+    background: var(--sapBackgroundColor);
+}
+
+/* Card hover effect */
+.sapFCard:hover {
+    transform: scale(1.08);
+}
+
+/* Panel headers: add emoji margin and bold style */
+.sapMPanelHdr {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--sapTextColor);
+}
+
+.sapMPanelHdr .sapMTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Buttons: softer radius & consistent spacing */
+.sapMBtn {
+    border-radius: 8px !important;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+/* Adjust input and searchfield spacing */
+.sapMInputBase, .sapMSFF {
+    border-radius: 6px !important;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.95rem;
+}
+
+/* FileUploader container spacing */
+.uploadTxt {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--sapContent_LabelColor);
+    font-size: 16px;
+}
+.flxBox{
+    right: 93px;
+    
+}
+/* Positioning the Q&A buttons nicely */
+/* .QAhbox {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+} */
+
+/* Responsive layout tweak */
+@media (max-width: 900px) {
+    .sapMPage > section > .sapMFlexBox {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sapFCard {
+        width: 90% !important;
+        margin-bottom: 1.5rem;
+    }
+}
+.selectedBtn {
+    background-color: #0070f2;
+    color: white;
+  }

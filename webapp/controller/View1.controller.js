@@ -385,7 +385,7 @@ sap.ui.define([
     return createdAt >= startOfToday && createdAt < endOfToday;
   });
 
-  const oHistoryModel = new sap.ui.model.json.JSONModel({ questions: filtered });
+  const oHistoryModel = new sap.ui.model.json.JSONModel({ questions: filtered,_allQuestions: data.value  });
   oDialog.setModel(oHistoryModel, "history");
   oDialog.open();
             },
@@ -590,8 +590,39 @@ sap.ui.define([
             reader.onerror = reject;
             reader.readAsDataURL(blob);
         });
-    }
-    
+    },
+    onThemeChange: function (oEvent) {
+      const sSelectedTheme = oEvent.getParameter("selectedItem").getKey();
+      sap.ui.getCore().applyTheme(sSelectedTheme);
+      localStorage.setItem("selectedTheme", sSelectedTheme); // optional: remember the theme
+  },
+  onFilterWeekly: function () {
+    this._filterHistoryByDays(7);
+  },
+  
+  onFilterMonthly: function () {
+    this._filterHistoryByDays(30);
+  },
+  
+  _filterHistoryByDays: function (days) {
+    const oDialog = this.byId("historyDialog");
+    const oModel = oDialog.getModel("history");
+    if (!oModel) return;
+  
+    const all = oModel.getProperty("/_allQuestions") || [];
+    const now = new Date();
+    const from = new Date();
+    from.setDate(now.getDate() - days);
+  
+    const filtered = all.filter(entry => {
+      const createdAt = new Date(entry.CreatedAt);
+      return createdAt >= from && createdAt <= now;
+    });
+  
+    oModel.setProperty("/questions", filtered);
+  }
+  
+  
     
     
     
