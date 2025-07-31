@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <Dialog id="historyDialog" title="Asked Questions History" draggable="true" resizable="true">
+    <VBox>
+      <List id="historyList" items="{
+    path: 'history>/questions'
+  }">
+        <CustomListItem>
+          <VBox class="sapUiSmallMargin">
+            <Text text="{history>Question}" wrapping="true" />
+            <Text text="{history>Answer}" wrapping="true" />
+            <Text text="{history>CreatedAt}" wrapping="true"/>
+          </VBox>
+        </CustomListItem>
+      </List>
+    </VBox>
+    <endButton>
+      <Button text="Close" press=".onCloseHistoryDialog" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>
