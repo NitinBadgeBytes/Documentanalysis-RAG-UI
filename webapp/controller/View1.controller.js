@@ -620,8 +620,95 @@ sap.ui.define([
     });
   
     oModel.setProperty("/questions", filtered);
-  }
+  },
   
+  // adding chart===============================================================================
+  onChartPress: function () {
+    const oView = this.getView();
+  
+    // Destroy previous to avoid ID conflicts
+    const oldChartDialog = sap.ui.core.Fragment.byId(oView.createId("chartDialog"));
+    if (oldChartDialog) oldChartDialog.destroy();
+  
+    sap.ui.core.Fragment.load({
+      name: "com.docqanda.docqa.view.ChartDialog",
+      controller: this,
+      id: oView.getId()
+    }).then(function (oDialog) {
+      oView.addDependent(oDialog);
+  
+      const chartModel = new sap.ui.model.json.JSONModel({ data: [] });
+      oDialog.setModel(chartModel, "chart");
+  
+      oDialog.open();
+      this._loadChartData("today"); // default view
+    }.bind(this));
+  },
+  
+  _loadChartData: function (range) {
+    $.ajax({
+      url: "./docqaDest/odata/v4/doc-qa/AskedQuestions?$orderby=CreatedAt desc",
+      method: "GET",
+      success: function (data) {
+        const now = new Date();
+        let fromDate;
+  
+        switch (range) {
+          case "weekly":
+            fromDate = new Date(now);
+            fromDate.setDate(now.getDate() - 6);
+            break;
+          case "monthly":
+            fromDate = new Date(now);
+            fromDate.setDate(now.getDate() - 29);
+            break;
+          default: // today
+            fromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        }
+  
+        const countsByDay = {};
+  
+        data.value.forEach(item => {
+          const created = new Date(item.CreatedAt);
+          if (created >= fromDate && created <= now) {
+            const label = created.toISOString().split('T')[0];
+            countsByDay[label] = (countsByDay[label] || 0) + 1;
+          }
+        });
+  
+        const chartData = Object.entries(countsByDay).map(([label, value]) => ({ label, value }));
+  
+        const oDialog = this.byId("chartDialog");
+        const oChartModel = oDialog.getModel("chart");
+        oChartModel.setProperty("/data", chartData);
+      }.bind(this),
+      error: function () {
+        sap.m.MessageToast.show("Error loading chart data.");
+      }
+    });
+  },
+ 
+  onFilterTodayChart: function () {
+    this._loadChartData("today");
+  },
+  onFilterWeeklyChart: function () {
+    this._loadChartData("weekly");
+  },
+  onFilterMonthlyChart: function () {
+    this._loadChartData("monthly");
+  },
+  onCloseChartDialog: function (oEvent) {
+    const oDialog = oEvent.getSource().getParent();
+    oDialog.close();
+    oDialog.destroy();
+  },
+  _getRuntimeBaseURL: function () {
+    var appId = this.getOwnerComponent().getManifestEntry("/sap.app/id");
+    var appPath = appId.replaceAll(".", "/");
+    var appModulePath = jQuery.sap.getModulePath(appPath);
+
+    return appModulePath;
+},
   
     
     

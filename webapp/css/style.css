@@ -33,7 +33,7 @@
 
 /* Card hover effect */
 .sapFCard:hover {
-    transform: scale(1.08);
+    transform: scale(1.04);
 }
 
 /* Panel headers: add emoji margin and bold style */

@@ -1,0 +1,34 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" 
+xmlns:viz="sap.viz.ui5.controls" 
+xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+xmlns:viz.data="sap.viz.ui5.data">
+  <Dialog id="chartDialog" title="Questions Analytics"  draggable="true" resizable="true" >
+    <VBox class="sapUiSmallMargin">
+      <HBox class="sapUiTinyMarginBottom">
+        <Button text="Today" press="onFilterTodayChart" />
+        <Button text="Weekly" press="onFilterWeeklyChart" class="sapUiTinyMarginBegin" />
+        <Button text="Monthly" press="onFilterMonthlyChart" class="sapUiTinyMarginBegin" />
+      </HBox>
+
+      <viz:VizFrame id="chartViz" uiConfig="{applicationSet:'fiori'}" width="100%" height="300px" vizType="column">
+        <viz:dataset>
+          <viz.data:FlattenedDataset data="{chart>/data}">
+            <viz.data:dimensions>
+              <viz.data:DimensionDefinition name="Date" value="{chart>label}" />
+            </viz.data:dimensions>
+            <viz.data:measures>
+              <viz.data:MeasureDefinition name="Questions Asked" value="{chart>value}" />
+            </viz.data:measures>
+          </viz.data:FlattenedDataset>
+        </viz:dataset>
+        <viz:feeds>
+          <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Questions Asked" />
+          <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Date" />
+        </viz:feeds>
+      </viz:VizFrame>
+    </VBox>
+    <endButton>
+      <Button text="Close" press="onCloseChartDialog" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

@@ -6,9 +6,26 @@
 	xmlns:card="sap.f.cards"
     xmlns="sap.m">
     <Page id="page" title="Document QA" class="page">
+    <customHeader>
+	<Bar>
+		<contentLeft>
+			<Title text="Document QA Assistant" />
+		</contentLeft>
+		<contentRight>
+			<Select id="themeSelector" change="onThemeChange" selectedKey="sap_fiori_3">
+				<items>
+					<core:Item key="sap_fiori_3" text="Morning (Light)" />
+					<core:Item key="sap_fiori_3_dark" text="Evening (Dark)" />
+					<core:Item key="sap_fiori_3_hcb" text="High Contrast Black" />
+					<core:Item key="sap_fiori_3_hcw" text="High Contrast White" />
+				</items>
+			</Select>
+		</contentRight>
+	</Bar>
+</customHeader>
        
     <content>
-    	<FlexBox class="flxBox"
+    	<!-- <FlexBox class="flxBox"
 				height="20px"
 				alignItems="Start"
 				justifyContent="End">
@@ -20,11 +37,11 @@
                         <core:Item key="sap_fiori_3_hcw" text="High Contrast White" />
                     </items>
                 </Select>
-			</FlexBox>
+			</FlexBox> -->
              
            <HBox >
              
-             	<f:Card class="sapUiMediumMargin" width="42rem" height="35rem">
+             	<f:Card class="sapUiMediumMargin" width="42rem" height="30rem">
 		<f:header>
 			<card:Header title="UPLOAD" subtitle="" />
 		</f:header>
@@ -57,7 +74,7 @@
                 </VBox>
 		</f:content>
 	</f:Card>
-            	<f:Card class="sapUiMediumMargin" width="42rem" height="35rem">
+            	<f:Card class="sapUiMediumMargin" width="42rem" height="30rem">
 		<f:header>
 			<card:Header title="RETRIEVE ANSWER" subtitle="" />
 		</f:header>
@@ -93,6 +110,7 @@
                             <Button text="Ask" press="onAskQuestion" icon="sap-icon://sys-enter-2" type="Emphasized"/>
                             <Button text="History" press="onHistoryPress" icon="sap-icon://history" class="sapUiTinyMarginBegin"/>
                             <Button id="voiceBtn" icon="sap-icon://microphone" press="onVoiceAsk" tooltip="Ask by voice" class="sapUiTinyMarginBegin" />
+                            <Button text="Chart" press="onChartPress" icon="sap-icon://business-objects-experience" class="sapUiTinyMarginBegin" />
                         </HBox>
                 </Panel>
 
