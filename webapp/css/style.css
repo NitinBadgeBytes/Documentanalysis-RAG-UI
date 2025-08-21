@@ -96,4 +96,9 @@
 .selectedBtn {
     background-color: #0070f2;
     color: white;
+}
+
+.customFooterBar {
+    height: 60px !important;  /* You can change to 70px, 80px, etc. */
+    line-height: 60px;        /* Vertically center the content */
   }

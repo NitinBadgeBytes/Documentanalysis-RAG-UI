@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="summaryDialog"
+        title="Document Summary"
+        class="sapUiContentPadding"
+       >
+        
+        <VBox class="sapUiSmallMargin">
+            <Text
+                id="summaryText"
+                text="{/summary}" 
+                wrapping="true" />
+        </VBox>
+        
+        <endButton>
+            <Button
+                text="Close"
+                press="onCloseSummary" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

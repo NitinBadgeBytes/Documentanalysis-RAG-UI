@@ -31,6 +31,23 @@ sap.ui.define([
             ] });
             this.getView().setModel(oFilteredModel, "filteredSuggestions");
             this.oSF = this.getView().byId("questionInput");
+           
+            // for uploaded documents
+                const uploadDocModel = new sap.ui.model.json.JSONModel({ uploadedDocs: [] });
+    this.getView().setModel(uploadDocModel,"docModel");
+            $.ajax({
+      url: this._getRuntimeBaseURL() + "/docqaDest/odata/v4/doc-qa/Documents ", 
+       method: "GET",
+       success: function (data) {
+        // const uniqueDocs = this._filterDuplicates(data.value);
+        // this.getView().getModel().setProperty("/uploadedDocs", uniqueDocs);
+        console.log("Raw docs from backend:", data.value);
+        const uniqueDocs = this._filterDuplicates(data.value);
+        console.log("After removing duplicates:", uniqueDocs);
+        this.getView().getModel("docModel").setProperty("/uploadedDocs", uniqueDocs);
+       }.bind(this)
+});
+
         },
         
         onFileChange: function (oEvent) {
@@ -51,46 +68,7 @@ sap.ui.define([
             class: "sapUiSmallMarginTop"
           });
           oVBox.addItem(progressIndicator);
-          // this._fileToBase64(file).then(function (base64) {
-          //   const filename = file.name;
-    
-          //   // Upload Document using jQuery.ajax
-          //   $.ajax({
-          //     url: "./docqaDest/odata/v4/doc-qa/UploadDocument",
-          //     method: "POST",
-          //     contentType: "application/json",
-          //     data: JSON.stringify({ filename, content: base64 }),
-          //     success: function (uploadedDocID) {
-          //       //this.docID = uploadedDocID;
-          //       this.docID = uploadedDocID.value;
-          //       MessageToast.show("PDF uploaded. Generating embeddings...");
-    
-          //       // Generate Embeddings
-          //       $.ajax({
-          //         url: "./docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
-          //         method: "POST",
-          //         contentType: "application/json",
-          //         data: JSON.stringify({ docID: this.docID }),
-          //         success: function () {
-          //           MessageToast.show("Embeddings generated. You can now ask a question.");
-          //         }.bind(this),
-          //         error: function (xhr) {
-          //           console.error(xhr.responseText);
-          //           MessageToast.show("Embedding failed: " + xhr.responseText);
-          //         }
-          //       });
-    
-          //     }.bind(this),
-          //     error: function (xhr) {
-          //       console.error(xhr.responseText);
-          //       MessageToast.show("Upload failed: " + xhr.responseText);
-          //     }
-          //   });
-    
-          // }.bind(this)).catch(function (err) {
-          //   console.error(err);
-          //   MessageToast.show("Error reading file");
-          // });
+         
 
           // newly added
           this._fileToBase64(file).then(function (base64) {
@@ -99,7 +77,8 @@ sap.ui.define([
             // oModel.setProperty("/uploadProgress", 0);
     
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", "./docqaDest/odata/v4/doc-qa/UploadDocument", true);
+            // xhr.open("POST", "./docqaDest/odata/v4/doc-qa/UploadDocument", true);
+            xhr.open("POST", this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/UploadDocument", true);
             xhr.setRequestHeader("Content-Type", "application/json");
     
             // Progress handler
@@ -125,7 +104,8 @@ sap.ui.define([
     
                 // Generate Embeddings
                 $.ajax({
-                  url: "./docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
+                  // url: "./docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
+                  url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
                   method: "POST",
                   contentType: "application/json",
                   data: JSON.stringify({ docID: this.docID }),
@@ -180,7 +160,7 @@ sap.ui.define([
     
           // Ask Question
           $.ajax({
-            url: "./docqaDest/odata/v4/doc-qa/AskQuestion",
+            url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/AskQuestion",
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({ question, docID: this.docID }),
@@ -188,11 +168,11 @@ sap.ui.define([
               //progressIndicator.destroy();
               //this.getView().getModel().setData(result);
                //  Keep only the first highlight
-      const filtered = {
-        answer: result.answer,
-        highlights: result.highlights?.length ? [result.highlights[0]] : []
-      };
-      this.getView().getModel().setData(filtered);
+           const filtered = {
+            answer: result.answer,
+            highlights: result.highlights?.length ? [result.highlights[0]] : []
+           };
+           this.getView().getModel().setData(filtered);
             }.bind(this),
             error: function (xhr) {
              // progressIndicator.destroy();
@@ -213,48 +193,7 @@ sap.ui.define([
             reader.readAsDataURL(file);
           });
         },
-        // onScrapeWebPage: function () {
-        //   const url = this.byId("urlInput").getValue();
-        //   const oModel = this.getView().getModel();
         
-        //   if (!url) {
-        //     MessageToast.show("Please enter a valid URL.");
-        //     return;
-        //   }
-        
-        //   // Call ScrapeWebPage endpoint
-        //   $.ajax({
-        //     url: "./docqaDest/odata/v4/doc-qa/ScrapeWebPage",
-        //     method: "POST",
-        //     contentType: "application/json",
-        //     data: JSON.stringify({ url }),
-        //     success: function (uploadedDocID) {
-        //       this.docID = uploadedDocID.value;
-        //       MessageToast.show("Web page scraped. Generating embeddings...");
-        
-        //       // Generate embeddings
-        //       $.ajax({
-        //         url: "./docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
-        //         method: "POST",
-        //         contentType: "application/json",
-        //         data: JSON.stringify({ docID: this.docID }),
-        //         success: function () {
-        //           MessageToast.show("Embeddings generated. You can now ask a question.");
-        //         }.bind(this),
-        //         error: function (xhr) {
-        //           console.error(xhr.responseText);
-        //           MessageToast.show("Embedding failed: " + xhr.responseText);
-        //         }
-        //       });
-        
-        //     }.bind(this),
-        //     error: function (xhr) {
-        //       console.error(xhr.responseText);
-        //       MessageToast.show("Failed to scrape page: " + xhr.responseText);
-        //     }
-        //   });
-        //   this.byId("questionInput").setEnabled(true);
-        // },
         onScrapeWebPage: function () {
           const url = this.byId("urlInput").getValue();
           const oModel = this.getView().getModel();
@@ -277,7 +216,7 @@ sap.ui.define([
         
           // Call ScrapeWebPage endpoint
           $.ajax({
-            url: "./docqaDest/odata/v4/doc-qa/ScrapeWebPage",
+            url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/ScrapeWebPage",
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify({ url }),
@@ -288,7 +227,7 @@ sap.ui.define([
         
               // Generate embeddings
               $.ajax({
-                url: "./docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
+                url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/GenerateEmbeddings",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({ docID: this.docID }),
@@ -316,33 +255,14 @@ sap.ui.define([
         
           this.byId("questionInput").setEnabled(true);
         },
-        // for Histroy
-        // onHistoryPress: async function () {
-        //   const oDialog = await this.loadFragment({
-        //     name: "com.docqanda.docqa.view.HistoryDialog",
-        //     controller: this
-        //   });
-          
-        //   //AJAX call to fetch data
-        //   $.ajax({
-        //     url: "./docqaDest/odata/v4/doc-qa/AskedQuestions", // adjust if your base path is different
-        //     method: "GET",
-        //     dataType: "json",
-        //     success: function (data) {
-        //       const oHistoryModel = new sap.ui.model.json.JSONModel({ questions: data.value });
-        //       oDialog.setModel(oHistoryModel, "history");
-        //       oDialog.open();
-        //     },
-        //     error: function () {
-        //       sap.m.MessageToast.show("Failed to load history.");
-        //     }
-        //   });
-        // },
+        
         onHistoryPress: function () {
           const oView = this.getView();
-        
+          var that = this;
+          //const fragmentId = "chartFragment";
           // Destroy existing dialog if already exists (to avoid duplicate ID error)
-          const oldDialog = sap.ui.core.Fragment.byId(oView.createId("historyDialog"));
+            //const oldDialog = sap.ui.core.Fragment.byId(oView.createId("historyDialog"));
+           const oldDialog = this.getView().byId("historyDialog");
           if (oldDialog) {
             oldDialog.destroy();
           }
@@ -352,27 +272,12 @@ sap.ui.define([
             name: "com.docqanda.docqa.view.HistoryDialog",
             controller: this,
             id: oView.getId() // ensures unique ID prefix
+             
           }).then(function (oDialog) {
             oView.addDependent(oDialog);
-            //oDialog.open();
-            // Perform AJAX call to load history
-            //const oModel = oView.getModel(); // OData model
-             //   //AJAX call to fetch data
-          // $.ajax({
-          //   url: "./docqaDest/odata/v4/doc-qa/AskedQuestions", // adjust if your base path is different
-          //   method: "GET",
-          //   dataType: "json",
-          //   success: function (data) {
-          //     const oHistoryModel = new sap.ui.model.json.JSONModel({ questions: data.value });
-          //     oDialog.setModel(oHistoryModel, "history");
-          //     oDialog.open();
-          //   },
-          //   error: function () {
-          //     sap.m.MessageToast.show("Failed to load history.");
-          //   }
-          // });
+           
           $.ajax({
-            url: "./docqaDest/odata/v4/doc-qa/AskedQuestions?$orderby=CreatedAt desc", // optional: latest first
+            url: that._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/AskedQuestions?$orderby=CreatedAt desc", // optional: latest first
             method: "GET",
             dataType: "json",
             success: function (data) {
@@ -395,10 +300,7 @@ sap.ui.define([
           });
           });
         },
-        // onCloseHistoryDialog: function () {
-        //   //const oDialog = sap.ui.core.Fragment.byId("com.docqanda.docqa.view.HistoryDialog", "historyDialog");
-        //   this.byId("historyDialog").close();
-        // }
+       
         onCloseHistoryDialog: function (oEvent) {
           const oDialog = oEvent.getSource().getParent();
           oDialog.close();
@@ -408,7 +310,7 @@ sap.ui.define([
         // search suggestion
         loadQuestionSuggestions: function () {
           $.ajax({
-            url: "./docqaDest/odata/v4/doc-qa/AskedQuestions",
+            url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/AskedQuestions",
             method: "GET",
             dataType: "json",
             success: function (data) {
@@ -457,66 +359,7 @@ sap.ui.define([
 			    this.oSF.suggest();
         },
 
-        // new added
-      //   onVoiceAsk: function () {
-      //     if (!navigator.mediaDevices || !window.MediaRecorder) {
-      //         MessageToast.show("Your browser doesn't support voice input.");
-      //         return;
-      //     }
-      
-      //     MessageToast.show("🎙️ Listening... Speak your question.");
-      //     const constraints = { audio: true };
-      
-      //     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-      //         const mediaRecorder = new MediaRecorder(stream);
-      //         const audioChunks = [];
-      
-      //         mediaRecorder.ondataavailable = event => {
-      //             if (event.data.size > 0) {
-      //                 audioChunks.push(event.data);
-      //             }
-      //         };
-      
-      //         mediaRecorder.onstop = () => {
-      //             const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-      
-      //             const reader = new FileReader();
-      //             reader.onloadend = () => {
-      //                 const base64Audio = reader.result.split(',')[1];
-      
-      //                 // 🔁 Send to backend
-      //                 $.ajax({
-      //                     url: "./docqaDest/odata/v4/doc-qa/TranscribeVoice",
-      //                     method: "POST",
-      //                     contentType: "application/json",
-      //                     data: JSON.stringify({ audio: base64Audio }),
-      //                     success: function (result) {
-      //                         if (result.transcript) {
-      //                             this.byId("questionInput").setValue(result.transcript);
-      //                             this.onAskQuestion(); // call same as text
-      //                         } else {
-      //                             MessageToast.show("No transcription returned.");
-      //                         }
-      //                     }.bind(this),
-      //                     error: function (xhr) {
-      //                         console.error(xhr.responseText);
-      //                         MessageToast.show("Voice transcription failed.");
-      //                     }
-      //                 });
-      //             };
-      //             reader.readAsDataURL(audioBlob);
-      //         };
-      
-      //         mediaRecorder.start();
-      
-      //         setTimeout(() => {
-      //             mediaRecorder.stop();
-      //         }, 4000); // record for 4 seconds
-      //     }).catch(err => {
-      //         console.error(err);
-      //         MessageToast.show("Could not access microphone.");
-      //     });
-      // }
+       
       onVoiceAsk: function () {
         if (!navigator.mediaDevices || !window.MediaRecorder) {
             MessageToast.show("Your browser doesn't support voice input.");
@@ -548,7 +391,7 @@ sap.ui.define([
                     filedata: base64Audio.split(',')[1] // remove data URL prefix
                 };
     
-                fetch("./docqaDest/odata/v4/doc-qa/TranscribeVoice", {
+                fetch(this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/TranscribeVoice", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -625,9 +468,10 @@ sap.ui.define([
   // adding chart===============================================================================
   onChartPress: function () {
     const oView = this.getView();
-  
+     //const fragmentId = "chartFragment";
     // Destroy previous to avoid ID conflicts
     const oldChartDialog = sap.ui.core.Fragment.byId(oView.createId("chartDialog"));
+     //const oldChartDialog = sap.ui.core.Fragment.byId(fragmentId, "chartDialog");
     if (oldChartDialog) oldChartDialog.destroy();
   
     sap.ui.core.Fragment.load({
@@ -647,7 +491,7 @@ sap.ui.define([
   
   _loadChartData: function (range) {
     $.ajax({
-      url: "./docqaDest/odata/v4/doc-qa/AskedQuestions?$orderby=CreatedAt desc",
+      url: this._getRuntimeBaseURL()+"/docqaDest/odata/v4/doc-qa/AskedQuestions?$orderby=CreatedAt desc",
       method: "GET",
       success: function (data) {
         const now = new Date();
@@ -709,10 +553,72 @@ sap.ui.define([
 
     return appModulePath;
 },
-  
-    
-    
-    
-        
+onSupportPress: function () {
+  sap.m.URLHelper.triggerEmail(
+    "support@badgebytes.com",        // recipient email
+    "Feedback / Support Request",    // email subject
+    "Hi Team,\n\nI would like to share the following feedback:\n\n"  // email body
+  );
+},
+onFeedbackPress:function(){
+  sap.m.URLHelper.triggerEmail(
+    "support@badgebytes.com",        // recipient email
+    "Feedback / Support Request",    // email subject
+    "Hi Team,\n\nI would like to share the following feedback:\n\n"  // email body
+  );
+},
+_filterDuplicates: function (docs) {
+    const seen = new Set();
+    return docs.filter(doc => {
+        if (seen.has(doc.filename)) { // use filename as unique key
+            return false;
+        }
+        seen.add(doc.filename);
+        return true;
+    });
+},
+onDocumentSelect: function (oEvent) {
+    const selectedDocID = oEvent.getParameter("selectedItem").getKey();
+    this.docID = selectedDocID;
+     this.byId("questionInput").setEnabled(true);
+},
+onSummaryPress: function () {
+    $.ajax({
+        url: this._getRuntimeBaseURL() + "/docqaDest/odata/v4/doc-qa/SummarizeDocument", // CAP Action endpoint
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            docID: this.docID
+        }),
+        success: async function (result) {
+            // Put result into JSON model for fragment binding
+            const oSummaryModel = new sap.ui.model.json.JSONModel({
+                summary: result.summary
+            });
+            this.getView().setModel(oSummaryModel, "summaryData");
+
+            // Lazy load fragment
+            if (!this._pSummaryDialog) {
+                this._pSummaryDialog = this.loadFragment({
+                    name: "com.docqanda.docqa.view.SummaryDialog",
+                    id: this.getView().getId()
+                });
+            }
+            const oDialog = await this._pSummaryDialog;
+            oDialog.setModel(oSummaryModel);
+            oDialog.open();
+        }.bind(this),
+
+        error: function (xhr, status, error) {
+            sap.m.MessageToast.show("Failed to fetch summary: " + error);
+        }
+    });
+},
+
+onCloseSummary: function (oEvent) {
+    oEvent.getSource().getParent().close();
+}
+
+
     });
 });

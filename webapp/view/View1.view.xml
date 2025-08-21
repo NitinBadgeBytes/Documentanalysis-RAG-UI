@@ -20,6 +20,19 @@
 					<core:Item key="sap_fiori_3_hcw" text="High Contrast White" />
 				</items>
 			</Select>
+             <Button text="Chart" press="onChartPress" icon="sap-icon://business-objects-experience" class="sapUiTinyMarginBegin" />
+               <Button text="History" press="onHistoryPress" icon="sap-icon://history" class="sapUiTinyMarginBegin"/>
+                 <Button text="Summary" press="onSummaryPress" icon="sap-icon://attachment-text-file" class="sapUiTinyMarginBegin"/>
+               <!-- newly modified 13-08-2025 -->
+               <ComboBox
+    id="uploadedDocsCombo"
+    placeholder="Select an uploaded document"
+    items="{
+        path: 'docModel>/uploadedDocs'
+    }"
+    selectionChange=".onDocumentSelect">
+    <core:Item key="{docModel>ID}" text="{docModel>filename}" />
+</ComboBox>
 		</contentRight>
 	</Bar>
 </customHeader>
@@ -41,7 +54,7 @@
              
            <HBox >
              
-             	<f:Card class="sapUiMediumMargin" width="42rem" height="30rem">
+             	<f:Card class="sapUiSmallMargin" width="45rem" height="32rem">
 		<f:header>
 			<card:Header title="UPLOAD" subtitle="" />
 		</f:header>
@@ -74,7 +87,7 @@
                 </VBox>
 		</f:content>
 	</f:Card>
-            	<f:Card class="sapUiMediumMargin" width="42rem" height="30rem">
+            	<f:Card class="sapUiSmallMargin" width="45rem" height="32rem">
 		<f:header>
 			<card:Header title="RETRIEVE ANSWER" subtitle="" />
 		</f:header>
@@ -108,9 +121,9 @@
                     </VBox>
                     <HBox class="QAhbox">
                             <Button text="Ask" press="onAskQuestion" icon="sap-icon://sys-enter-2" type="Emphasized"/>
-                            <Button text="History" press="onHistoryPress" icon="sap-icon://history" class="sapUiTinyMarginBegin"/>
-                            <Button id="voiceBtn" icon="sap-icon://microphone" press="onVoiceAsk" tooltip="Ask by voice" class="sapUiTinyMarginBegin" />
-                            <Button text="Chart" press="onChartPress" icon="sap-icon://business-objects-experience" class="sapUiTinyMarginBegin" />
+                          
+                            <!-- <Button id="voiceBtn" icon="sap-icon://microphone" press="onVoiceAsk" tooltip="Ask by voice" class="sapUiTinyMarginBegin" /> -->
+                           
                         </HBox>
                 </Panel>
 
@@ -128,5 +141,17 @@
            </HBox> 
     
     </content>
+      <!-- <footer>
+    <Bar design="Footer" class="customFooterBar">
+      <contentLeft>
+        <Text text="© 2025 Document QA Assistant" class="sapUiTinyMarginBegin" />
+      </contentLeft>
+      <contentRight>
+        <Button text="Feedback" icon="sap-icon://email" type="Transparent" press="onFeedbackPress" />
+        <Button text="Support" icon="sap-icon://help" type="Transparent" press="onSupportPress" />
+      </contentRight>
+    </Bar>
+  </footer> -->
     </Page>
+  
 </mvc:View>
